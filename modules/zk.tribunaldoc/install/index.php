@@ -63,7 +63,7 @@ class zk_tribunaldoc extends CModule{
     public function InstallDB(){
         global $DB, $DBType;
 
-        $DB->RunSQLBatch($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/".$this->MODULE_ID."/install/db/".strtolower($DBType)."/install.sql");
+        $DB->RunSQLBatch(__DIR__."/db/".strtolower($DBType)."/install.sql");
 
         return false;
     }
@@ -71,16 +71,21 @@ class zk_tribunaldoc extends CModule{
     public function DoUninstall(){
         global $APPLICATION;
 
-        $this->UnInstallFiles();
-        $this->UnInstallDB();
-        $this->UnInstallEvents();
+        if($_REQUEST["step"] < 2){
+            $APPLICATION->IncludeAdminFile(
+                Loc::getMessage("ZK_TRIBUNALDOC_UNINSTALL_TITLE")." \"".Loc::getMessage("ZK_TRIBUNALDOC_MODULE_NAME")."\"",__DIR__."/unstep1.php"
+            );
+        }else if($_REQUEST["step"] == 2){
+            $this->UnInstallFiles();
+            $this->UnInstallDB();
+            $this->UnInstallEvents();
 
-        ModuleManager::unRegisterModule($this->MODULE_ID);
+            ModuleManager::unRegisterModule($this->MODULE_ID);
 
-        $APPLICATION->IncludeAdminFile(
-            Loc::getMessage("ZK_TRIBUNALDOC_UNINSTALL_TITLE")." \"".Loc::getMessage("ZK_TRIBUNALDOC_MODULE_NAME")."\"",__DIR__."/unstep.php"
-        );
-
+            $APPLICATION->IncludeAdminFile(
+                Loc::getMessage("ZK_TRIBUNALDOC_UNINSTALL_TITLE")." \"".Loc::getMessage("ZK_TRIBUNALDOC_MODULE_NAME")."\"",__DIR__."/unstep2.php"
+            );
+        }
         return false;
     }
 
@@ -89,12 +94,11 @@ class zk_tribunaldoc extends CModule{
     }
 
     public function UnInstallDB(){
-        Option::delete($this->MODULE_ID);
-
         global $DB, $DBType;
 
         if($_REQUEST["save_data"] != "Y"){
-            $DB->RunSQLBatch($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/".$this->MODULE_ID."/install/db/".strtolower($DBType)."/uninstall.sql");
+            Option::delete($this->MODULE_ID);
+            $DB->RunSQLBatch(__DIR__."/db/".strtolower($DBType)."/uninstall.sql");
         }
 
         return false;
