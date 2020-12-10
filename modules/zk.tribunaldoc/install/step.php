@@ -10,11 +10,11 @@
     if($errorException = $APPLICATION->GetException()){
         echo(CAdminMessage::ShowMessage($errorException->GetString()));
     }else{
-        echo(CAdminMessage::ShowNote(Loc::getMessage("STEP_BEFORE")." ".Loc::getMessage("STEP_AFTER")));
+        echo(CAdminMessage::ShowNote(Loc::getMessage("ZK_TRIBUNALDOC_STEP_BEFORE")." ".Loc::getMessage("ZK_TRIBUNALDOC_STEP_AFTER")));
     }
 ?>
     
 <form action="<?php echo($APPLICATION->GetCurPage()); ?>">
     <input type="hidden" name="lang" value="<?php echo(LANG); ?>" />
-    <input type="submit" value="<?php echo(Loc::getMessage("STEP_SUBMIT_BACK")); ?>">
+    <input type="submit" value="<?php echo(Loc::getMessage("ZK_TRIBUNALDOC_STEP_SUBMIT_BACK")); ?>">
 </form>

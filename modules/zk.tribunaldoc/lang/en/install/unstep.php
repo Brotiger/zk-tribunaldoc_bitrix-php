@@ -1,5 +1,5 @@
 <?php
-    $MESS["UNSTEP_BEFORE"] = "Модуль";
-    $MESS["UNSTEP_AFTER"] = "удален";
-    $MESS["UNSTEP_SUBMIT_BACK"] = "Вернуться к списку модулей";
+    $MESS["ZK_TRIBUNALDOC_UNSTEP_BEFORE"] = "Модуль";
+    $MESS["ZK_TRIBUNALDOC_UNSTEP_AFTER"] = "удален";
+    $MESS["ZK_TRIBUNALDOC_UNSTEP_SUBMIT_BACK"] = "Вернуться к списку модулей";
 ?>

@@ -19,10 +19,10 @@ class zk_tribunaldoc extends CModule{
             $this->MODULE_VERSION = $arModuleVersion["VERSION"];
             $this->MODULE_VERSION_DATE = $arModuleVersion["VERSION_DATE"];
 
-            $this->MODULE_NAME = Loc::getMessage("MODULE_NAME");
-            $this->MODULE_DESCRIPTION = Loc::getMessage("MODULE_DESCRIPTION");
-            $this->PARTNER_NAME = Loc::getMessage("PARTNER_NAME");
-            $this->PARTNER_URI = Loc::getMessage("PARTNER_URI");
+            $this->MODULE_NAME = Loc::getMessage("ZK_TRIBUNALDOC_MODULE_NAME");
+            $this->MODULE_DESCRIPTION = Loc::getMessage("ZK_TRIBUNALDOC_MODULE_DESCRIPTION");
+            $this->PARTNER_NAME = Loc::getMessage("ZK_TRIBUNALDOC_PARTNER_NAME");
+            $this->PARTNER_URI = Loc::getMessage("ZK_TRIBUNALDOC_PARTNER_URI");
 
             return false;
         }
@@ -41,12 +41,12 @@ class zk_tribunaldoc extends CModule{
         }else{
 
             $APPLICATION->ThrowException(
-                Loc::getMessage("BITRIX_VERSION_ERROR")
+                Loc::getMessage("ZK_TRIBUNALDOC_BITRIX_VERSION_ERROR")
             );
         }
 
         $APPLICATION->IncludeAdminFile(
-            Loc::getMessage("INSTALL_TITLE")." \"".Loc::getMessage("MODULE_NAME")."\"",__DIR__."/step.php"
+            Loc::getMessage("ZK_TRIBUNALDOC_INSTALL_TITLE")." \"".Loc::getMessage("ZK_TRIBUNALDOC_MODULE_NAME")."\"",__DIR__."/step.php"
         );
 
         return false;
@@ -61,6 +61,10 @@ class zk_tribunaldoc extends CModule{
     }
 
     public function InstallDB(){
+        global $DB, $DBType;
+
+        $DB->RunSQLBatch($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/".$this->MODULE_ID."/install/db/".strtolower($DBType)."/install.sql");
+
         return false;
     }
 
@@ -68,13 +72,13 @@ class zk_tribunaldoc extends CModule{
         global $APPLICATION;
 
         $this->UnInstallFiles();
-        $this->UninstallDB();
+        $this->UnInstallDB();
         $this->UnInstallEvents();
 
         ModuleManager::unRegisterModule($this->MODULE_ID);
 
         $APPLICATION->IncludeAdminFile(
-            Loc::getMessage("UNINSTALL_TITLE")." \"".Loc::getMessage("MODULE_NAME")."\"",__DIR__."/unstep.php"
+            Loc::getMessage("ZK_TRIBUNALDOC_UNINSTALL_TITLE")." \"".Loc::getMessage("ZK_TRIBUNALDOC_MODULE_NAME")."\"",__DIR__."/unstep.php"
         );
 
         return false;
@@ -84,8 +88,14 @@ class zk_tribunaldoc extends CModule{
         return false;
     }
 
-    public function UninstallDB(){
+    public function UnInstallDB(){
         Option::delete($this->MODULE_ID);
+
+        global $DB, $DBType;
+
+        if($_REQUEST["save_data"] != "Y"){
+            $DB->RunSQLBatch($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/".$this->MODULE_ID."/install/db/".strtolower($DBType)."/uninstall.sql");
+        }
 
         return false;
     }

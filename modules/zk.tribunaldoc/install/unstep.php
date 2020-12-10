@@ -8,10 +8,10 @@
         return;
     }
 
-    echo(CAdminMessage::ShowNote(Loc::getMessage("UNSTEP_BEFORE")." ".Loc::getMessage("UNSTEP_AFTER")));
+    echo(CAdminMessage::ShowNote(Loc::getMessage("ZK_TRIBUNALDOC_UNSTEP_BEFORE")." ".Loc::getMessage("ZK_TRIBUNALDOC_UNSTEP_AFTER")));
 ?>
 
 <form action="<?php echo($APPLICATION->GetCurPage()); ?>">
     <input type="hidden" name="lang" value="<?php echo(LANG); ?>">
-    <input type="submit" value="<?php echo(Loc::getMessage("UNSTEP_SUBMIT_BACK")); ?>">
+    <input type="submit" value="<?php echo(Loc::getMessage("ZK_TRIBUNALDOC_UNSTEP_SUBMIT_BACK")); ?>">
 </form>

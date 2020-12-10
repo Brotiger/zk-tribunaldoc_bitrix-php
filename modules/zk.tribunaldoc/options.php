@@ -15,26 +15,25 @@ Loader::includeModule($module_id);
 $aTabs = array(
     array(
         "DIV" => "edit",
-        "TAB" => Loc::getMessage("OPTIONS_TAB_NAME"),
-        "TITLE"   => Loc::getMessage("OPTIONS_TAB_NAME"),
+        "TAB" => Loc::getMessage("ZK_TRIBUNALDOC_OPTIONS_TAB_NAME"),
+        "TITLE"   => Loc::getMessage("ZK_TRIBUNALDOC_OPTIONS_TAB_NAME"),
         "OPTIONS" => array(
-            Loc::getMessage("OPTIONS_TAB_COMMON"),
+            Loc::getMessage("ZK_TRIBUNALDOC_ACCESS_RIGHTS"),
             array(
-                "switch_on",
-                Loc::getMessage("OPTIONS_TAB_SWITCH_ON"),
-                "Y",
-                array("checkbox")
+                "sad_url",
+                Loc::getMessage("ZK_TRIBUNALDOC_SAD_URL"),
+                "",
+                array("text")
             ),
-            Loc::getMessage("ACCESS_RIGHTS"),
             array(
                 "sad_id",
-                Loc::getMessage("SAD_ID"),
+                Loc::getMessage("ZK_TRIBUNALDOC_SAD_ID"),
                 "",
                 array("text")
             ),
             array(
                 "sad_password",
-                Loc::getMessage("SAD_PASSWORD"),
+                Loc::getMessage("ZK_TRIBUNALDOC_SAD_PASSWORD"),
                 "",
                 array("password")
             )
@@ -96,8 +95,8 @@ $tabSadControl->Begin();
    $tabSadControl->Buttons();
 ?>
 
-<input type="submit" name="apply" value="<?php echo(Loc::GetMessage("INPUT_APPLY")); ?>" class="adm-btn-save" />
-<input type="submit" name="default" value="<?php echo(Loc::GetMessage("INPUT_DEFAULT")); ?>" />
+<input type="submit" name="apply" value="<?php echo(Loc::GetMessage("ZK_TRIBUNALDOC_INPUT_APPLY")); ?>" class="adm-btn-save" />
+<input type="submit" name="default" value="<?php echo(Loc::GetMessage("ZK_TRIBUNALDOC_INPUT_DEFAULT")); ?>" />
 
 <?php
     echo(bitrix_sessid_post());
