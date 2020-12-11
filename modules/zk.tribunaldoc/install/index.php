@@ -57,6 +57,8 @@ class zk_tribunaldoc extends CModule{
     }
 
     public function InstallFiles(){
+        CopyDirFiles($_SERVER["DOCUMENT_ROOT"]."/local/modules/".$this->MODULE_ID."/install/components", $_SERVER["DOCUMENT_ROOT"]."/local/components", true, true);
+
         return false;
     }
 
@@ -90,6 +92,9 @@ class zk_tribunaldoc extends CModule{
     }
 
     public function UnInstallFiles(){
+        $dirName = str_replace(strstr($this->MODULE_ID, "."), "", $this->MODULE_ID);
+        DeleteDirFilesEx("/local/components/".$dirName);
+
         return false;
     }
 

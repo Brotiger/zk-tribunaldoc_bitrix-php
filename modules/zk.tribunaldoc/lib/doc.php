@@ -19,6 +19,22 @@ class Doc {
     }
     public function getCount()
     {   
+        global $USER;
+        $userId = $USER->GetID();
+
+        $rsUser = $USER->GetByID($userId);
+        $arUser = $rsUser->Fetch();
+
+        $userSADid = $arUser["UF_PRAKTIKA"];
+
+        $body = '<?xml version="1.0" encoding="UTF-8"?>
+        <message xmlns:a="urn:sd-praktika:api" xmlns="urn:sd-praktika:api">
+            <getDocumentsOnConsideration>
+                <request a:userId="'.$userSADid.'">
+                </request>
+            </getDocumentsOnConsideration>
+        </message>';
+
         $module_id = self::getModuleId();
 
         $authorization_string = Option::get($module_id, "sad_id").":".Option::get($module_id, "sad_password");
@@ -29,7 +45,7 @@ class Doc {
         $httpClient = new HttpClient(); 
         $httpClient->setHeader('Content-Type', 'application/xml');
         $httpClient->setHeader('Authorization', $authorization);
-        $result = $httpClient->get($url);//Сменить на POST и добавить тело!
+        $result = $httpClient->post($url, $body);
         $result = simplexml_load_string($result);
         $documents = $result->getDocumentsOnConsideration->response;
         $documentsCount = count($documents->document);
@@ -49,6 +65,8 @@ class Doc {
 
         if($docCount > $dbCount){
             $newDocCount = $docCount - $dbCount;
+        }else if($docCount < $dbCount){//Если количество документов в СЭД уменьшилось
+            self::setCount();
         }
 
         return $newDocCount;
