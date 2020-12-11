@@ -9,6 +9,7 @@ class Doc {
 
     private static $db = "zk_tribunaldoc_count";
     private static $protocol = "http";
+    private static $postfix = "/uapi/?url=uapi/sendRequest";
 
     public function getSADPage(){
         $module_id = self::getModuleId();
@@ -40,7 +41,7 @@ class Doc {
         $authorization_string = Option::get($module_id, "sad_id").":".Option::get($module_id, "sad_password");
         $authorization = base64_encode($authorization_string);
 
-        $url = self::getSADPage();
+        $url = self::getSADPage().self::$postfix;
 
         $httpClient = new HttpClient(); 
         $httpClient->setHeader('Content-Type', 'application/xml');
