@@ -49,6 +49,8 @@ class Doc {
 
         if($docCount > $dbCount){
             $newDocCount = $docCount - $dbCount;
+        }else if($docCount < $dbCount){//Если количество документов в СЭД уменьшилось
+            self::setCount();
         }
 
         return $newDocCount;

@@ -13,27 +13,29 @@ if(CModule::includeModule("zk.tribunaldoc")):
         zk\tribunaldoc\Doc::setCount();
     }
 ?>
-
-<div>
-    <div><?php echo(Loc::GetMessage("ZK_TRIBUNALDOC_COMPONENT_TITLE")); ?></div>
-    <div>
+<?$this->SetViewTarget("sidebar");?>
+<div class="tribunaldoc_block">
+    <div class="tribunaldoc_title"><?php echo(Loc::GetMessage("ZK_TRIBUNALDOC_COMPONENT_TITLE")); ?></div>
+    <div class="tribunaldoc_content">
+    <div class="tribunaldoc_item">
         <span><?php echo(Loc::GetMessage("ZK_TRIBUNALDOC_COMPONENT_DOC_ALL")); ?> </span>
-        <span>
+        <span class="tribunaldoc_number">
         <?php echo zk\tribunaldoc\Doc::getCount(); ?>
         </span>
     </div>
-    <div>
+    <div class="tribunaldoc_item">
         <span><?php echo(Loc::GetMessage("ZK_TRIBUNALDOC_COMPONENT_DOC_NEW")); ?> </span>
-        <span>
-        <?php echo zk\tribunaldoc\Doc::getNewCount(); ?>
+        <span class="tribunaldoc_number tribunaldoc_new">
+        + <?php echo zk\tribunaldoc\Doc::getNewCount(); ?>
         </span>
     </div>
     <form class="sidebar-widget-top" action="<?php echo($APPLICATION->GetCurPage()); ?>" method="POST" onsubmit="window.open('<?php echo zk\tribunaldoc\Doc::getSADPage() ?>')">
         <input type="hidden" name="lang" value="<?php echo(LANG); ?>" />
-        <input type="submit" value="<?php echo(Loc::GetMessage("ZK_TRIBUNALDOC_COMPONENT_BUTTON")); ?>">
+        <input class="tribunaldoc_button" type="submit" value="<?php echo(Loc::GetMessage("ZK_TRIBUNALDOC_COMPONENT_BUTTON")); ?>">
     </form>
+    </div>
 </div>
-
+<?$this->EndViewTarget();?>
 <?php
 endif;
 ?>
