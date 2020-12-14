@@ -42,11 +42,13 @@ class Doc {
         $authorization = base64_encode($authorization_string);
 
         $url = self::getSADPage().self::$postfix;
+        #$url = self::getSADPage();//local
 
         $httpClient = new HttpClient(); 
         $httpClient->setHeader('Content-Type', 'application/xml');
         $httpClient->setHeader('Authorization', $authorization);
         $result = $httpClient->post($url, $body);
+        #$result = $httpClient->get($url);//local
         $result = simplexml_load_string($result);
         $documents = $result->getDocumentsOnConsideration->response;
         $documentsCount = count($documents->document);
@@ -66,6 +68,18 @@ class Doc {
 
         if($docCount > $dbCount){
             $newDocCount = $docCount - $dbCount;
+            if (\Bitrix\Main\Loader::includeModule('im'))
+            {
+                \CIMNotify::Add([
+                    "TO_USER_ID" => $USER->GetId(),
+                    "NOTIFY_TYPE" => IM_NOTIFY_SYSTEM, 
+                    "NOTIFY_MODULE" => "intranet", 
+                    "NOTIFY_EVENT" => "security_otp",
+                    "NOTIFY_MESSAGE" => "У вас есь непросмотренные документы.[br] Количество: ".$newDocCount,
+                    "PUSH_MESSAGE" => "У вас есь непросмотренные документы. Количество: ".$newDocCount,
+                    "PUSH_IMPORTANT" => "N",
+                ]);
+            }
         }else if($docCount < $dbCount){//Если количество документов в СЭД уменьшилось
             self::setCount();
         }

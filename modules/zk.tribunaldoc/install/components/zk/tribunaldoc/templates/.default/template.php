@@ -8,7 +8,7 @@ if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
 global $APPLICATION;
 
 if(CModule::includeModule("zk.tribunaldoc")):
-    if(!empty($_POST))
+    if($_POST["viewsad"])
     {
         zk\tribunaldoc\Doc::setCount();
     }
@@ -31,7 +31,7 @@ if(CModule::includeModule("zk.tribunaldoc")):
     </div>
     <form class="sidebar-widget-top" action="<?php echo($APPLICATION->GetCurPage()); ?>" method="POST" onsubmit="window.open('<?php echo zk\tribunaldoc\Doc::getSADPage() ?>')">
         <input type="hidden" name="lang" value="<?php echo(LANG); ?>" />
-        <input class="tribunaldoc_button" type="submit" value="<?php echo(Loc::GetMessage("ZK_TRIBUNALDOC_COMPONENT_BUTTON")); ?>">
+        <input class="tribunaldoc_button" name="viewsad" type="submit" value="<?php echo(Loc::GetMessage("ZK_TRIBUNALDOC_COMPONENT_BUTTON")); ?>">
     </form>
     </div>
 </div>
