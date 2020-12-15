@@ -1,0 +1,9 @@
+<?php
+$MESS["ZK_TRIBUNALDOC_OPTIONS_TAB_NAME"] = "Customization";
+$MESS["ZK_TRIBUNALDOC_ACCESS_RIGHTS"] = "Access rights";
+$MESS["ZK_TRIBUNALDOC_SAD_ID"] = "User ID in EDMS:";
+$MESS["ZK_TRIBUNALDOC_SAD_PASSWORD"] = "User password in EDMS:";
+$MESS["ZK_TRIBUNALDOC_INPUT_APPLY"] = "Apply";
+$MESS["ZK_TRIBUNALDOC_INPUT_DEFAULT"] = "Reset";
+$MESS["ZK_TRIBUNALDOC_SAD_URL"] = "Domain or IP server with API";
+?>

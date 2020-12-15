@@ -58,6 +58,7 @@ class zk_tribunaldoc extends CModule{
 
     public function InstallFiles(){
         CopyDirFiles($_SERVER["DOCUMENT_ROOT"]."/local/modules/".$this->MODULE_ID."/install/components", $_SERVER["DOCUMENT_ROOT"]."/local/components", true, true);
+        CopyDirFiles($_SERVER["DOCUMENT_ROOT"]."/local/modules/".$this->MODULE_ID."/install/ajax", $_SERVER["DOCUMENT_ROOT"]."/ajax", true, true);
 
         return false;
     }
@@ -92,8 +93,9 @@ class zk_tribunaldoc extends CModule{
     }
 
     public function UnInstallFiles(){
-        $dirName = str_replace(strstr($this->MODULE_ID, "."), "", $this->MODULE_ID);
+        $dirName = str_replace(".", "/", $this->MODULE_ID);
         DeleteDirFilesEx("/local/components/".$dirName);
+        DeleteDirFilesEx("/ajax/".$dirName);
 
         return false;
     }

@@ -46,7 +46,9 @@ class Doc {
 
         $httpClient = new HttpClient(); 
         $httpClient->setHeader('Content-Type', 'application/xml');
-        $httpClient->setHeader('Authorization', $authorization);
+        $httpClient->setHeader('Host', $module_id);
+        $httpClient->setHeader('Content-Length', mb_strlen($body, '8bit'));
+        $httpClient->setHeader('Authorization', "Basic ".$authorization);
         $result = $httpClient->post($url, $body);
         #$result = $httpClient->get($url);//local
         $result = simplexml_load_string($result);
@@ -68,9 +70,10 @@ class Doc {
 
         if($docCount > $dbCount){
             $newDocCount = $docCount - $dbCount;
+            
             if (\Bitrix\Main\Loader::includeModule('im'))
             {
-                \CIMNotify::Add([
+               \CIMNotify::Add([
                     "TO_USER_ID" => $USER->GetId(),
                     "NOTIFY_TYPE" => IM_NOTIFY_SYSTEM, 
                     "NOTIFY_MODULE" => "intranet", 
@@ -114,7 +117,6 @@ class Doc {
                 $fields
             );
         }
-        header("location:" . $APPLICATION->GetCurPage());
     }
 }
 ?>
