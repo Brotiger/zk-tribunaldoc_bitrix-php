@@ -32,6 +32,7 @@ class Doc {
         <message xmlns:a="urn:sd-praktika:api" xmlns="urn:sd-praktika:api">
             <getDocumentsOnConsideration>
                 <request a:userId="'.$userSADid.'">
+                    <a:dateTo>'. date("Y-m-d\TG:i:s") .'/a:dateTo>
                 </request>
             </getDocumentsOnConsideration>
         </message>';

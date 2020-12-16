@@ -9,7 +9,7 @@ global $APPLICATION;
 
 if(CModule::includeModule("zk.tribunaldoc")):
 ?>
-<?$this->SetViewTarget("sidebar");?>
+<?$this->SetViewTarget("sidebar", 0);?>
 <div class="tribunaldoc_block">
     <div class="tribunaldoc_title"><?php echo(Loc::GetMessage("ZK_TRIBUNALDOC_COMPONENT_TITLE")); ?></div>
     <div class="tribunaldoc_content">
