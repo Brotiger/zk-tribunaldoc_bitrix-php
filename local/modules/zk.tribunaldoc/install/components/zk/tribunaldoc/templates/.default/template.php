@@ -21,11 +21,11 @@ if(CModule::includeModule("zk.tribunaldoc")):
     </div>
     <div class="tribunaldoc_item">
         <span><?php echo(Loc::GetMessage("ZK_TRIBUNALDOC_COMPONENT_DOC_NEW")); ?> </span>
-        <span class="tribunaldoc_number tribunaldoc_new" id="tribunalDocNewCount">
-        + <?php echo zk\tribunaldoc\Doc::getNewCount(); ?>
+        <span class="tribunaldoc_number tribunaldoc_new">
+        + <span id="tribunalDocNewCount"><?php echo zk\tribunaldoc\Doc::getNewCount(); ?></span>
         </span>
     </div>
-    <form id="tribunaldoc" class="sidebar-widget-top" action="/ajax/zk/tribunaldoc/zk.tribunaldoc.php" method="POST" onsubmit="window.open('<?php echo zk\tribunaldoc\Doc::getSADPage() ?>')">
+    <form id="tribunaldoc" class="sidebar-widget-top" action="/ajax/zk/tribunaldoc/zk.tribunaldoc.php?viewsad=true" method="GET" onsubmit="window.open('<?php echo zk\tribunaldoc\Doc::getSADPage('https') ?>')">
         <input type="hidden" name="lang" value="<?php echo(LANG); ?>" />
         <input class="tribunaldoc_button" name="viewsad" type="submit" value="<?php echo(Loc::GetMessage("ZK_TRIBUNALDOC_COMPONENT_BUTTON")); ?>">
     </form>
@@ -37,9 +37,8 @@ if(CModule::includeModule("zk.tribunaldoc")):
     event.preventDefault();
    
     let xhr = new XMLHttpRequest();
-    xhr.open("POST", tribunaldoc.getAttribute('action'),true);
-    let formData = new FormData(tribunaldoc);
-    xhr.send(formData);
+    xhr.open("GET", tribunaldoc.getAttribute('action'),true);
+    xhr.send();
     xhr.onreadystatechange=()=>{
         if(xhr.readyState===4){
             if(xhr.status == 200 && xhr.status<300){
@@ -54,6 +53,27 @@ if(CModule::includeModule("zk.tribunaldoc")):
         }
     };
  });
+
+ var intervalTime = 7;
+ setInterval(() => {
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", "/ajax/zk/tribunaldoc/zk.tribunaldoc.php?updateInfo=true");
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send();
+        xhr.onreadystatechange=()=>{
+            if(xhr.readyState===4){
+                if(xhr.status == 200 && xhr.status<300){
+                    var new_info = JSON.parse(xhr.response);
+
+                    var tribunalDocCount = document.getElementById("tribunalDocCount");
+                    var tribunalDocNewCount = document.getElementById("tribunalDocNewCount");
+
+                    tribunalDocCount.innerText = new_info["count"];
+                    tribunalDocNewCount.innerText = new_info["new_count"];
+                }
+            }
+        };
+    }, intervalTime * 60 * 1000);
 </script>
 <?$this->EndViewTarget();?>
 <?php

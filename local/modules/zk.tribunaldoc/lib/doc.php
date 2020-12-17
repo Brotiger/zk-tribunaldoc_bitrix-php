@@ -8,12 +8,11 @@ use Bitrix\Main\Config\Option;
 class Doc {
 
     private static $db = "zk_tribunaldoc_count";
-    private static $protocol = "http";
     private static $postfix = "/uapi/?url=uapi/sendRequest";
 
-    public function getSADPage(){
+    public function getSADPage($protocol){
         $module_id = self::getModuleId();
-        return self::$protocol."://".Option::get($module_id, "sad_url");
+        return $protocol."://".Option::get($module_id, "sad_url");
     }
     private function getModuleId(){
         return pathinfo(dirname(__DIR__))["basename"];
@@ -42,16 +41,16 @@ class Doc {
         $authorization_string = Option::get($module_id, "sad_id").":".Option::get($module_id, "sad_password");
         $authorization = base64_encode($authorization_string);
 
-        $url = self::getSADPage().self::$postfix;
-        #$url = self::getSADPage();//local
+        #$url = self::getSADPage().self::$postfix;
+        $url = self::getSADPage("http");//local
 
         $httpClient = new HttpClient(); 
         $httpClient->setHeader('Content-Type', 'application/xml');
         $httpClient->setHeader('Host', $module_id);
         $httpClient->setHeader('Content-Length', mb_strlen($body, '8bit'));
         $httpClient->setHeader('Authorization', "Basic ".$authorization);
-        $result = $httpClient->post($url, $body);
-        #$result = $httpClient->get($url);//local
+        #$result = $httpClient->post($url, $body);
+        $result = $httpClient->get($url);//local
         $result = simplexml_load_string($result);
         $documents = $result->getDocumentsOnConsideration->response;
         $documentsCount = count($documents->document);
@@ -59,7 +58,7 @@ class Doc {
         return $documentsCount;
     }
     
-    public function getNewCount(){
+    public function getNewCount($push = true){
         global $USER, $DB;
 
         $newDocCount = 0;
@@ -71,18 +70,19 @@ class Doc {
 
         if($docCount > $dbCount){
             $newDocCount = $docCount - $dbCount;
-            
-            if (\Bitrix\Main\Loader::includeModule('im'))
-            {
-               \CIMNotify::Add([
-                    "TO_USER_ID" => $USER->GetId(),
-                    "NOTIFY_TYPE" => IM_NOTIFY_SYSTEM, 
-                    "NOTIFY_MODULE" => "intranet", 
-                    "NOTIFY_EVENT" => "security_otp",
-                    "NOTIFY_MESSAGE" => "У вас есь непросмотренные документы.[br] Количество: ".$newDocCount,
-                    "PUSH_MESSAGE" => "У вас есь непросмотренные документы. Количество: ".$newDocCount,
-                    "PUSH_IMPORTANT" => "N",
-                ]);
+            if($push){
+                if (\Bitrix\Main\Loader::includeModule('im'))
+                {
+                \CIMNotify::Add([
+                        "TO_USER_ID" => $USER->GetId(),
+                        "NOTIFY_TYPE" => IM_NOTIFY_SYSTEM, 
+                        "NOTIFY_MODULE" => "intranet", 
+                        "NOTIFY_EVENT" => "security_otp",
+                        "NOTIFY_MESSAGE" => "У вас есь непросмотренные документы.[br] Количество: ".$newDocCount,
+                        "PUSH_MESSAGE" => "У вас есь непросмотренные документы. Количество: ".$newDocCount,
+                        "PUSH_IMPORTANT" => "N",
+                    ]);
+                }
             }
         }else if($docCount < $dbCount){//Если количество документов в СЭД уменьшилось
             self::setCount();
