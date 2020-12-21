@@ -41,7 +41,7 @@ class Doc {
         $authorization_string = Option::get($module_id, "sad_id").":".Option::get($module_id, "sad_password");
         $authorization = base64_encode($authorization_string);
 
-        #$url = self::getSADPage().self::$postfix;
+        #$url = self::getSADPage("http").self::$postfix;
         $url = self::getSADPage("http");//local
 
         $httpClient = new HttpClient(); 
@@ -51,22 +51,32 @@ class Doc {
         $httpClient->setHeader('Authorization', "Basic ".$authorization);
         #$result = $httpClient->post($url, $body);
         $result = $httpClient->get($url);//local
-        $result = simplexml_load_string($result);
-        $documents = $result->getDocumentsOnConsideration->response;
-        $documentsCount = count($documents->document);
+        if($result){
+            $result = simplexml_load_string($result);
+            if($result->getDocumentsOnConsideration){
+                $documents = $result->getDocumentsOnConsideration->response;
+                $documentsCount = count($documents->document);
 
-        return $documentsCount;
+                return $documentsCount;
+            }
+            return self::getCountInDB();
+        }else{
+            return self::getCountInDB();
+        }
     }
-    
-    public function getNewCount($push = true){
+    public function getCountInDB(){
         global $USER, $DB;
-
-        $newDocCount = 0;
-        $docCount = self::getCount();
-
         $sqlCount = "SELECT doc_count FROM ".self::$db." WHERE user_id = ".$USER->GetID();
         $docCountResult = $DB->Query($sqlCount);
         $dbCount = $docCountResult->GetNext()["doc_count"];
+        return $dbCount;
+    }
+    public function getNewCount($push = true){
+        global $USER;
+        $newDocCount = 0;
+        $docCount = self::getCount();
+
+        $dbCount = self::getCountInDB();
 
         if($docCount > $dbCount){
             $newDocCount = $docCount - $dbCount;
