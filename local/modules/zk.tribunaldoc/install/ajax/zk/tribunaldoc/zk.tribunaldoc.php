@@ -3,7 +3,7 @@ require_once($_SERVER['DOCUMENT_ROOT']. "/bitrix/modules/main/include/prolog_bef
 
 if(CModule::includeModule("zk.tribunaldoc")){
     if(isset($_GET["viewsad"])){
-        zk\tribunaldoc\Doc::setCount();
+        zk\tribunaldoc\Doc::setViewCount();
         $count = zk\tribunaldoc\Doc::getCount();
         $newCount = zk\tribunaldoc\Doc::getNewCount();
         $newInfo = array(

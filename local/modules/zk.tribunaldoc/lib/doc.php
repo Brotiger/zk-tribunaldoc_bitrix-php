@@ -17,7 +17,7 @@ class Doc {
     private function getModuleId(){
         return pathinfo(dirname(__DIR__))["basename"];
     }
-    public function getCount()
+    public function getInfo()
     {   
         global $USER;
         $userId = $USER->GetID();
@@ -59,11 +59,27 @@ class Doc {
 
                 return $documentsCount;
             }
-            return self::getCountInDB();
+            return false;
         }else{
-            return self::getCountInDB();
+            return false;
         }
     }
+
+    public function getCount(){
+        $info = self::getInfo();
+        if($info){
+            self::setCount($info);
+            return $info;
+        }else{
+            $countInDB = self::getCountInDB();
+
+            if(!$countInDB){
+                return 0;
+            }
+            return $countInDB;
+        }
+    }
+
     public function getCountInDB(){
         global $USER, $DB;
         $sqlCount = "SELECT doc_count FROM ".self::$db." WHERE user_id = ".$USER->GetID();
@@ -71,39 +87,77 @@ class Doc {
         $dbCount = $docCountResult->GetNext()["doc_count"];
         return $dbCount;
     }
+
+    public function getViewCountInDB(){
+        global $USER, $DB;
+        $sqlCount = "SELECT new_doc_count FROM ".self::$db." WHERE user_id = ".$USER->GetID();
+        $docCountResult = $DB->Query($sqlCount);
+        $dbCount = $docCountResult->GetNext()["new_doc_count"];
+        return $dbCount;
+    }
+    
+    public function setViewCount($count = false){
+        global $USER, $DB, $APPLICATION;
+        if($count === false){
+            $count = self::getCountInDB();
+        }
+        $fields = array(
+            "user_id" => $USER->GetID(),
+            "new_doc_count" => $count
+        );
+
+        $sqlCheckRecord = "SELECT id FROM ".self::$db." WHERE user_id = ".$USER->GetID();
+        $checkResult = $DB->Query($sqlCheckRecord);
+
+        $idRecord = $checkResult->GetNext()["id"];
+
+        if($idRecord){
+            $DB->Update(
+                self::$db,
+                $fields,
+                "WHERE id = ".$idRecord
+            );
+        }else{
+            $DB->Insert(
+                self::$db,
+                $fields
+            );
+        }
+    }
     public function getNewCount($push = true){
         global $USER;
         $newDocCount = 0;
-        $docCount = self::getCount();
 
-        $dbCount = self::getCountInDB();
+        $docCount = self::getCountInDB();
+        $dbCount = self::getViewCountInDB();
 
-        if($docCount > $dbCount){
+        if($docCount != $dbCount){
             $newDocCount = $docCount - $dbCount;
-            if($push){
-                if (\Bitrix\Main\Loader::includeModule('im'))
-                {
-                \CIMNotify::Add([
-                        "TO_USER_ID" => $USER->GetId(),
-                        "NOTIFY_TYPE" => IM_NOTIFY_SYSTEM, 
-                        "NOTIFY_MODULE" => "intranet", 
-                        "NOTIFY_EVENT" => "security_otp",
-                        "NOTIFY_MESSAGE" => "У вас есь непросмотренные документы.[br] Количество: ".$newDocCount,
-                        "PUSH_MESSAGE" => "У вас есь непросмотренные документы. Количество: ".$newDocCount,
-                        "PUSH_IMPORTANT" => "N",
-                    ]);
+            if($newDocCount > 0){
+                if($push){
+                    if (\Bitrix\Main\Loader::includeModule('im'))
+                    {
+                    \CIMNotify::Add([
+                            "TO_USER_ID" => $USER->GetId(),
+                            "NOTIFY_TYPE" => IM_NOTIFY_SYSTEM, 
+                            "NOTIFY_MODULE" => "intranet", 
+                            "NOTIFY_EVENT" => "security_otp",
+                            "NOTIFY_MESSAGE" => "У вас есь непросмотренные документы.[br] Количество: ".$newDocCount,
+                            "PUSH_MESSAGE" => "У вас есь непросмотренные документы. Количество: ".$newDocCount,
+                            "PUSH_IMPORTANT" => "N",
+                        ]);
+                    }
                 }
+            }else{
+                self::setViewCount($docCount);
+                $newDocCount = 0;
             }
-        }else if($docCount < $dbCount){//Если количество документов в СЭД уменьшилось
-            self::setCount();
         }
 
         return $newDocCount;
     }
 
-    public function setCount(){
-        $count = self::getCount();
-
+    public function setCount($count){
         global $USER, $DB, $APPLICATION;
 
         $fields = array(
