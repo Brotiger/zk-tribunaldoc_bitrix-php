@@ -130,6 +130,7 @@ class Doc {
 
         $docCount = self::getCountInDB();
         $dbCount = self::getViewCountInDB();
+        $module_id = self::getModuleId();
 
         if($docCount != $dbCount){
             $newDocCount = $docCount - $dbCount;
@@ -140,8 +141,7 @@ class Doc {
                     \CIMNotify::Add([
                             "TO_USER_ID" => $USER->GetId(),
                             "NOTIFY_TYPE" => IM_NOTIFY_SYSTEM, 
-                            "NOTIFY_MODULE" => "intranet", 
-                            "NOTIFY_EVENT" => "security_otp",
+                            "NOTIFY_MODULE" => $module_id,
                             "NOTIFY_MESSAGE" => "У вас есь непросмотренные документы.[br] Количество: ".$newDocCount,
                             "PUSH_MESSAGE" => "У вас есь непросмотренные документы. Количество: ".$newDocCount,
                             "PUSH_IMPORTANT" => "N",
